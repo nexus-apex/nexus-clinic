@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Clinicappointments | NexusClinic{% endblock %}
+{% block page_title %}Clinicappointments{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search clinicappointments...">
+    <select name="status" onchange="this.form.submit()">
+      <option value="">All Status</option>
+      <option value="scheduled" {% if status_filter == 'scheduled' %}selected{% endif %}>Scheduled</option>
+      <option value="checked_in" {% if status_filter == 'checked_in' %}selected{% endif %}>Checked In</option>
+      <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+      <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+      <option value="no_show" {% if status_filter == 'no_show' %}selected{% endif %}>No Show</option>
+    </select>
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/clinicappointments/create/" class="btn btn-primary">+ New ClinicAppointment</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Patient Name</th><th>Doctor</th><th>Date</th><th>Time Slot</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/clinicappointments/{{ r.pk }}/edit/"><strong>{{ r.patient_name }}</strong></a></td>
+        <td>{{ r.doctor|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.date|date:"M d, Y"|default:"-" }}</td>
+        <td>{{ r.time_slot|default:"-" }}</td>
+        <td><span class="badge badge-blue">{{ r.get_status_display }}</span></td>
+        <td class="actions">
+          <a href="/clinicappointments/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/clinicappointments/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No clinicappointments found.</p>
+    <a href="/clinicappointments/create/" class="btn btn-primary" style="margin-top:1rem">Create ClinicAppointment</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
