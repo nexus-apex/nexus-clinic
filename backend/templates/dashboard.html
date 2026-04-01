@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Dashboard | NexusClinic{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-label">Total Patients</div>
+    <div class="stat-value">{{ patient_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Clinicappointments</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#10b981,#06b6d4);-webkit-background-clip:text;background-clip:text">{{ clinicappointment_count }}</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total Prescriptions</div>
+    <div class="stat-value" style="background:linear-gradient(135deg,#f59e0b,#f97316);-webkit-background-clip:text;background-clip:text">{{ prescription_count }}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+    <h3>Recent Patients</h3>
+    <a href="/patients/create/" class="btn btn-primary btn-sm">+ New Patient</a>
+  </div>
+  {% if recent %}
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Age</th><th>Gender</th><th>Phone</th><th>Email</th><th>Created</th></tr>
+    </thead>
+    <tbody>
+      {% for r in recent %}
+      <tr>
+        <td><a href="/patients/{{ r.pk }}/edit/">{{ r.name }}</a></td>
+        <td>{{ r.age|default:"-" }}</td><td><span class="badge badge-blue">{{ r.get_gender_display }}</span></td><td>{{ r.phone|default:"-" }}</td><td>{{ r.email|default:"-" }}</td><td style="color:var(--muted)">{{ r.created_at|date:"M d, Y" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No records yet.</p>
+    <a href="/patients/create/" class="btn btn-primary" style="margin-top:1rem">Create First Patient</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
