@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Prescriptions | NexusClinic{% endblock %}
+{% block page_title %}Prescriptions{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem">
+  <form class="search-bar" method="get" style="flex:1;margin-bottom:0">
+    <input type="text" name="search" value="{{ search }}" placeholder="Search prescriptions...">
+
+    <button type="submit" class="btn btn-primary btn-sm">Search</button>
+  </form>
+  <a href="/prescriptions/create/" class="btn btn-primary">+ New Prescription</a>
+</div>
+
+<div class="card">
+  {% if records %}
+  <table>
+    <thead>
+      <tr><th>Patient Name</th><th>Doctor</th><th>Date</th><th>Follow Up Date</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for r in records %}
+      <tr>
+        <td><a href="/prescriptions/{{ r.pk }}/edit/"><strong>{{ r.patient_name }}</strong></a></td>
+        <td>{{ r.doctor|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.date|date:"M d, Y"|default:"-" }}</td>
+        <td style="color:var(--muted)">{{ r.follow_up_date|date:"M d, Y"|default:"-" }}</td>
+        <td class="actions">
+          <a href="/prescriptions/{{ r.pk }}/edit/" class="btn btn-primary btn-sm">Edit</a>
+          <form method="post" action="/prescriptions/{{ r.pk }}/delete/" style="display:inline" onsubmit="return confirm('Delete?')">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Del</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty">
+    <p>No prescriptions found.</p>
+    <a href="/prescriptions/create/" class="btn btn-primary" style="margin-top:1rem">Create Prescription</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
